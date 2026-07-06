@@ -1,0 +1,45 @@
+import pandas as pd
+df = pd.read_excel(r"C:\Users\Amruta\OneDrive\Desktop\Python programs\Projects\Project Sales Analysis\data\sales_dataset.csv.xlsx")
+
+df.head(10)
+print(df.shape)
+df.dtypes
+
+df.isnull().sum()
+
+df = df.drop_duplicates()
+
+print(df.shape)
+
+df = df.fillna("Nan")
+
+df.isnull().sum()
+
+df.head(10)
+
+#Trim the excess space between the text
+df.columns = df.columns.str.strip()
+df.columns = df.columns.str.replace(r'\s+', '_', regex=True) # '\s' = it removes any whitespace from the text. & ' +' = means one or more
+                                                             # replacing any whitespace with the '_'
+df.columns = df.columns.str.replace(r'^_+', '', regex=True)  # '^_' = it means start of the string & ' +' = means one or more
+                                                             # replacing '_' from every start of the string with ''
+
+#Converting date in y-m-d format
+df['Date'] = pd.to_datetime(df['Date']).dt.strftime('%Y-%m-%d')
+
+#Column header & values alignment with decimal values cutoff using styler
+dm = df.head(10).style \
+    .format({
+        'Units_Sold':'{:.2f}',
+        'Gross_Sales':'{:.2f}',
+        'Discounts':'{:.2f}',
+        'Sales':'{:.2f}',
+        'COGS':'{:.2f}',
+        'Profit':'{:.2f}'
+    }) \
+    .set_table_styles(
+        [dict(selector='th', props=[('text-align', 'center')])]
+    ) \
+    .set_properties(**{'text-align': 'center'})
+
+dm
