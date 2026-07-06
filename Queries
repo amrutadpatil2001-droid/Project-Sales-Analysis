@@ -1,0 +1,37 @@
+select * from sales_data;
+
+--Total sales
+SELECT SUM("Sales") AS total_sales
+FROM sales_data;
+
+--Total sales by category
+SELECT "Product",
+       SUM("Sales") AS total_sales
+FROM sales_data
+GROUP BY "Product"
+order by total_sales desc;
+
+--Top 5 customers who makes high profits
+select "Product", sum("Profit") as Profit_gained
+from sales_data
+group by "Product"
+order by Profit_gained desc
+limit 5;
+
+--What is monthly trend
+select "Year","Month_Name", round(sum("Sales")::numeric,2) as Total_sales
+from sales_data
+group by "Year","Month_Name","Month_Number"
+order by "Year", Total_sales desc;
+
+--Profits by region
+select "Country", round(sum("Profit")::numeric,2) as Profit_gained
+from sales_data
+group by "Country"
+order by Profit_gained desc;
+
+--Segmentation impact on sales
+select "Segment", round(sum("Sales")::numeric,2) as Total_Sales
+from sales_data
+group by "Segment"
+order by Total_Sales desc;
