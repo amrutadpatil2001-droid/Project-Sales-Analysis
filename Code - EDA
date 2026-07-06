@@ -1,0 +1,67 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.read_csv(r"C:\Users\Amruta\OneDrive\Desktop\Python programs\Projects\Project Sales Analysis\data\cleaned_data.csv")
+
+#Sales by Category
+plt.bar(df['Product'], df['Sales'])
+
+plt.xlabel("Product")
+plt.ylabel("Sales")
+plt.title("Product vs Sales")
+plt.show()
+
+#Profit by Region
+country_sales = df.groupby('Country')['Sales'].sum()
+
+plt.pie(country_sales, labels=country_sales.index, autopct="%1.1f%%")
+plt.show
+
+#Monthly Trends
+monthly_sales = df.groupby('Month_Name')['Sales'].sum()
+plt.plot(monthly_sales.index, monthly_sales.values)
+plt.Figure(figsize=(30,9))
+plt.xlabel('Month_Name')
+plt.ylabel('monthly_sales')
+plt.show()
+
+df.groupby('Product').count()
+
+#Discounts Vs Sales
+grouped = df.groupby(['Product','Discount_Band'])['Sales'].mean().reset_index()
+plt.figure(figsize=(10,5))
+for cat in grouped['Product'].unique():
+    temp = grouped[grouped['Product'] == cat]
+    plt.plot(temp['Discount_Band'],
+             temp['Sales'],
+             marker='o',
+             label=cat)
+plt.xlabel('Discount Band')
+plt.ylabel('Average Sales')
+plt.title('Average Sales by Discount Band')
+plt.legend()
+plt.show()
+
+df.groupby('Month_Name')['Sales'].sum()
+
+Total_Sales = df.groupby('Segment')['Sales'].sum()
+plt.bar(df['Segment'],df['Sales'])
+plt.xlabel("Segmentation")
+plt.ylabel("Total_Sales")
+plt.show()
+
+#Connect to database
+from sqlalchemy import create_engine
+engine = create_engine(
+    'postgresql+psycopg2://postgres:12345@localhost:5432/project_sales_analysis'
+)
+conn = engine.connect()
+
+df.to_sql(
+    name='sales_data',
+    con=engine,
+    if_exists='replace',
+    index=False
+)
+print("Table created successfully")
+
